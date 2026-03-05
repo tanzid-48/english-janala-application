@@ -8,13 +8,22 @@ const loadLessons = () => {
         });
 };
 
+const removeActive = () => {
+    const lessonButtons = document.querySelectorAll(".lesson-btn")
+    lessonButtons.forEach(btn => btn.classList.remove("active"))
+}
+
 const loadLevelWord = (id) => {
     const url = `https://openapi.programming-hero.com/api/level/${id}`
 
     fetch(url)
         .then(res => res.json())
         .then(json => {
+            removeActive();
             displayLevelWord(json.data);
+
+            const clickBtn = document.getElementById(`lesson-btn-${id}`)
+            clickBtn.classList.add("active");
 
         })
 
@@ -25,7 +34,7 @@ const displayLevelWord = (words) => {
     wordContainer.innerHTML = "";
 
 
-    if(words.length === 0){
+    if (words.length === 0) {
         wordContainer.innerHTML = `
 
          <div class=" text-center col-span-full  rounded-xl py-10 space-y-6 font-bangla ">
@@ -34,21 +43,21 @@ const displayLevelWord = (words) => {
             <h2 class="text-5xl font-bold  ">নেক্সট Lesson এ যান।</h2>
         </div>
         `;
-       
+
         return;
 
-    } 
+    }
 
-    
+
 
     for (let word of words) {
         const wordCard = document.createElement("div");
         wordCard.innerHTML = `
 
         <div class="bg-white rounded-xl shadow-sm text-center py-10  px-5 space-y-3">
-            <h2 class="font-bold text-2xl">${word.word ?word.meaning : "শব্দ পাওয়া যাই নি"}</h2>
+            <h2 class="font-bold text-2xl">${word.word ? word.word : "শব্দ পাওয়া যাই নি"}</h2>
             <p class="font-semibold">Meaning /Pronounciation</p>
-            <div class=" font-bangla  font-medium text-2xl">${word.meaning ? word.meaning : " অর্থ পাওয়া যাই নি" } / ${word.pronunciation}</div>
+            <div class=" font-bangla  font-medium text-2xl">${word.meaning ? word.meaning : " অর্থ পাওয়া যাই নি"} / ${word.pronunciation}</div>
             <div class="flex justify-between items-center">
                 <button class="btn bg-[#1A91FF10] hover:bg-[#1A91FF80]"><i class="fa-solid fa-circle-info"></i></button>
                 <button class="btn bg-[#1A91FF10] hover:bg-[#1A91FF80]"><i class="fa-solid fa-volume-high"></i></button>
@@ -61,11 +70,7 @@ const displayLevelWord = (words) => {
 
         wordContainer.append(wordCard);
     }
-
-
 }
-
-
 
 const displayLessons = (lessons) => {
     // 1.get the container
@@ -79,7 +84,7 @@ const displayLessons = (lessons) => {
         const btnDiv = document.createElement("div")
         btnDiv.innerHTML = `
 
-     <button onclick = "loadLevelWord(${lesson.level_no})" class=" btn btn-outline btn-primary">
+     <button id="lesson-btn-${lesson.level_no}"  onclick = "loadLevelWord(${lesson.level_no})" class=" btn btn-outline btn-primary lesson-btn ">
      <i class="fa-solid fa-book-open"></i>
      </i> Lesson - ${lesson.level_no}</button>
   `;
